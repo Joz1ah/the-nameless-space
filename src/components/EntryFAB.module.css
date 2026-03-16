@@ -1,0 +1,94 @@
+/* Outer wrap — fixed to screen bottom-right always */
+.wrap {
+  position: fixed;
+  bottom: 28px;
+  right: 24px;
+  z-index: 400;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* center so chevrons align with main btn */
+  gap: 8px;
+}
+
+/* Chevron buttons — same style for up and down */
+.chevron {
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  background: var(--page);
+  border: 1.5px solid var(--border);
+  color: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2px 12px var(--page-shadow);
+  transition: background 0.2s, transform 0.2s;
+  animation: popIn 0.18s ease;
+  flex-shrink: 0;
+}
+.chevron:hover { background: var(--bg-2); transform: translateY(-2px); }
+
+/* Backdrop to close menu */
+.backdrop {
+  position: fixed; inset: 0; z-index: -1;
+}
+
+/* Main FAB */
+.main {
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: white;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 20px rgba(180,90,104,0.5);
+  transition: background 0.2s, transform 0.25s;
+  flex-shrink: 0;
+}
+.main:hover { background: var(--accent-hover); transform: scale(1.06); }
+.mainOpen { transform: rotate(90deg); background: var(--ink); }
+.mainOpen:hover { background: var(--ink-light); transform: rotate(90deg) scale(1.06); }
+
+/* Action list — absolutely positioned so it doesn't shift the column */
+.actions {
+  position: absolute;
+  bottom: calc(52px + 8px);
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 7px;
+}
+
+.action {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 16px 9px 13px;
+  background: var(--page);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  color: var(--ink-light);
+  font-size: 0.8rem;
+  box-shadow: 0 3px 12px var(--page-shadow);
+  white-space: nowrap;
+  animation: popUp 0.18s cubic-bezier(0,0,0.2,1) both;
+  transition: all 0.15s;
+}
+.action:hover { background: var(--bg-2); border-color: var(--accent-soft); color: var(--accent); transform: translateX(-3px); }
+.danger { color: #c0392b; }
+.danger:hover { border-color: #e57373; color: #c0392b; background: #fff5f5; }
+.actionLabel { font-size: 0.78rem; }
+
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.6); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes popUp {
+  from { opacity: 0; transform: translateY(8px) scale(0.93); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 600px) {
+  .wrap { bottom: 20px; right: 16px; }
+  .main  { width: 48px; height: 48px; }
+  .chevron { width: 48px; height: 48px; }
+  .actions { bottom: calc(48px + 8px); }
+}
+
+.muted { color: var(--ink-muted); }
+.muted:hover { color: var(--accent) !important; }

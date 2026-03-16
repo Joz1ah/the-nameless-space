@@ -1,0 +1,69 @@
+.container { display: flex; flex-direction: column; gap: 12px; }
+
+.dropzone {
+  border: 1.5px dashed var(--accent-soft);
+  border-radius: var(--radius); padding: 18px;
+  text-align: center; cursor: pointer;
+  color: var(--ink-muted); font-size: 0.83rem;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  transition: all 0.2s; background: var(--bg);
+}
+.dropzone:hover { border-color: var(--accent); color: var(--accent); background: var(--bg-2); }
+
+.uploading {
+  display: flex; align-items: center; gap: 8px;
+  color: var(--accent); animation: pulse 1s infinite;
+}
+@keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.5; } }
+
+.grid { display: flex; flex-wrap: wrap; gap: 14px; }
+
+.photoItem {
+  position: relative;
+  transform: rotate(var(--rotate));
+  transition: transform 0.2s ease;
+  background: white; padding: 6px 6px 28px;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.12);
+  border-radius: 2px; width: 130px;
+}
+.photoItem:hover { transform: rotate(0deg) scale(1.03); z-index: 2; }
+.highlighted { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.photoItem img { width: 100%; height: 100px; object-fit: cover; display: block; }
+
+.actions {
+  position: absolute; top: -8px; right: -8px;
+  display: flex; gap: 4px;
+  opacity: 0; transition: opacity 0.2s;
+}
+.photoItem:hover .actions { opacity: 1; }
+
+.starBtn, .removeBtn {
+  width: 22px; height: 22px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-size: 12px;
+}
+.starBtn { background: var(--bg-3); color: var(--ink-muted); }
+.starBtn:hover, .starred { background: #f5a623; color: white; }
+.removeBtn { background: var(--accent); }
+.removeBtn:hover { background: var(--accent-hover); }
+
+.caption {
+  position: absolute; bottom: 5px; left: 6px; right: 6px;
+  background: transparent; border: none; outline: none;
+  font-size: 0.65rem; color: #555;
+  font-family: var(--font-hand); text-align: center;
+  width: calc(100% - 12px);
+}
+.caption::placeholder { color: #bbb; font-style: italic; }
+
+.highlightBadge {
+  position: absolute; bottom: -18px; left: 50%; transform: translateX(-50%);
+  font-size: 0.58rem; color: var(--accent);
+  white-space: nowrap; font-style: italic;
+}
+
+.hint {
+  font-size: 0.68rem; color: var(--ink-muted);
+  font-style: italic; line-height: 1.5;
+}
