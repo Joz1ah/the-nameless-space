@@ -42,23 +42,34 @@
 
 .card {
   position: relative;
-  background: var(--page); border-radius: var(--radius);
+  border-radius: var(--radius);
   box-shadow: 0 2px 12px var(--page-shadow), 3px 3px 0 var(--bg-2);
   cursor: pointer; overflow: hidden;
   transition: transform 0.2s, box-shadow 0.2s;
-  border-left: 20px solid transparent;
-  border-left-color: var(--bg);
+  background-color: var(--page);
+  background-image:
+    linear-gradient(
+      to right,
+      transparent 20px,
+      rgba(201, 112, 126, 0.18) 20px,
+      rgba(201, 112, 126, 0.18) 21px,
+      transparent 21px
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      transparent,
+      transparent 27px,
+      rgba(180, 155, 165, 0.11) 27px,
+      rgba(180, 155, 165, 0.11) 28px
+    );
+  background-position: 0 0, 0 56px;
 }
-.card::before {
-  content: '';
-  position: absolute; left: 0; top: 0; bottom: 0;
-  width: 1px; background: rgba(201,112,126,0.2);
-}
+.card::before { display: none; }
 .card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px var(--page-shadow), 3px 3px 0 var(--bg-2); }
 
 .heartBadge { position: absolute; top: 10px; right: 12px; color: rgba(224,90,122,0.5); z-index: 2; pointer-events: none; }
 
-.cardInner { padding: 22px 24px; display: flex; gap: 20px; align-items: flex-start; }
+.cardInner { padding: 22px 24px 22px 32px; display: flex; gap: 20px; align-items: flex-start; }
 .cardPhoto { flex-shrink: 0; background: white; padding: 5px 5px 22px; box-shadow: 0 3px 10px rgba(0,0,0,0.1); border-radius: 2px; transform: rotate(1.5deg); width: 110px; }
 .cardPhoto img { width: 100px; height: 80px; object-fit: cover; display: block; }
 .cardBody { flex: 1; min-width: 0; }

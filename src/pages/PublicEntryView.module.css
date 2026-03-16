@@ -44,4 +44,29 @@
 .lightboxContent img { max-width:92vw; object-fit:contain; border-radius:3px; box-shadow:0 8px 40px rgba(0,0,0,0.5); }
 .lightboxCaption { font-family:var(--font-hand); font-size:0.9rem; color:rgba(255,255,255,0.7); margin-top:12px; }
 .lightboxClose { position:fixed; top:16px; right:16px; color:white; width:40px; height:40px; border-radius:50%; background:rgba(255,255,255,0.15); display:flex; align-items:center; justify-content:center; z-index:10; }
-@media (max-width:600px) { .shell { padding:12px 10px 60px; } .content { padding:24px 18px 28px 32px; } .margin { left:20px; } .highlightWrap { width:108px; } .highlightWrap img { width:94px; height:78px; } .title { font-size:1.45rem; } }
+@media (max-width: 600px) {
+  .shell { padding: 12px 10px 60px; }
+  .content { padding: 24px 16px 28px 48px; }
+  .margin { left: 20px; }
+  .page {
+    background-image:
+      linear-gradient(
+        to right,
+        transparent 36px,
+        rgba(201, 112, 126, 0.2) 36px,
+        rgba(201, 112, 126, 0.2) 38px,
+        transparent 38px
+      ),
+      repeating-linear-gradient(
+        to bottom,
+        transparent,
+        transparent 31px,
+        rgba(180, 155, 165, 0.13) 31px,
+        rgba(180, 155, 165, 0.13) 32px
+      );
+    background-position: 0 0, 0 100px;
+  }
+  .highlightWrap { width: 108px; }
+  .highlightWrap img { width: 94px; height: 78px; }
+  .title { font-size: 1.45rem; }
+}

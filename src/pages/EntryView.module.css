@@ -231,9 +231,27 @@
 /* ── mobile ── */
 @media (max-width: 600px) {
   .shell { padding: 12px 10px 120px; }
-  .content { padding: 24px 18px 28px 32px; }
+  .content { padding: 24px 16px 28px 48px; padding-right: 44px; }
   .margin { left: 20px; }
-  .headerRow { gap: 12px; padding-right: 24px; }
+  .page {
+    background-image:
+      linear-gradient(
+        to right,
+        transparent 36px,
+        rgba(201, 112, 126, 0.2) 36px,
+        rgba(201, 112, 126, 0.2) 38px,
+        transparent 38px
+      ),
+      repeating-linear-gradient(
+        to bottom,
+        transparent,
+        transparent 31px,
+        rgba(180, 155, 165, 0.13) 31px,
+        rgba(180, 155, 165, 0.13) 32px
+      );
+    background-position: 0 0, 0 100px;
+  }
+  .headerRow { gap: 12px; padding-right: 44px; }
   .highlightWrap { width: 108px; }
   .highlightWrap img { width: 94px; height: 78px; }
   .title { font-size: 1.45rem; }
@@ -241,7 +259,8 @@
   .photoFigure img { height: 110px; }
   .navBtn { padding: 10px 12px; }
   .navTitle { max-width: 110px; }
-  .cornerBtn { width: 30px; height: 30px; top: 10px; right: 10px; }
+  .cornerBtn { width: 28px; height: 28px; }
+  .cornerStack { top: 10px; right: 10px; }
 }
 
 .lockedBanner {
