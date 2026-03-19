@@ -6,9 +6,9 @@ import { RiSaveLine, RiArrowLeftLine, RiDraftLine, RiDeleteBinLine } from 'react
 import styles from './EntryEditor.module.css'
 
 export const CATEGORIES = [
+  { key: 'daily',  label: 'Daily',      emoji: '📅' },
   { key: 'food',   label: 'Food',       emoji: '🍽️' },
   { key: 'travel', label: 'Adventure',  emoji: '🌍' },
-  { key: 'daily',  label: 'Daily',      emoji: '📅' },
 ]
 
 const FOOD_TYPES = [
@@ -19,6 +19,12 @@ const FOOD_TYPES = [
   'Fusion', 'Fast Food', 'Street Food', 'Fine Dining',
 ]
 
+const DAILY_ACTIVITIES = [
+  'Walking', 'Running', 'Exercise', 'Gym', 'Yoga', 'Cycling',
+  'Visiting', 'Chilling', 'Reading', 'Studying', 'Working', 'Working from home',
+  'Cooking', 'Shopping', 'Travelling', 'Hiking', 'Gaming', 'Drawing', 'Journaling',
+]
+
 const ADVENTURE_TYPES = [
   'Hiking', 'Camping', 'Road Trip', 'Beach Vacation', 'City Exploration',
   'International Travel', 'Day Trip', 'Backpacking', 'Skiing', 'Scuba Diving',
@@ -27,15 +33,20 @@ const ADVENTURE_TYPES = [
 
 export const MOODS = [
   { emoji: '😊', label: 'happy' },
-  { emoji: '😌', label: 'calm' },
-  { emoji: '🥰', label: 'loved' },
-  { emoji: '✨', label: 'inspired' },
-  { emoji: '🎉', label: 'excited' },
-  { emoji: '🤔', label: 'reflective' },
   { emoji: '😔', label: 'sad' },
-  { emoji: '😴', label: 'tired' },
-  { emoji: '😤', label: 'frustrated' },
-  { emoji: '🌧', label: 'melancholic' },
+  { emoji: '😩', label: 'tired' },
+  { emoji: '😪', label: 'sleepy' },
+  { emoji: '😆', label: 'excited' },
+  { emoji: '🥳', label: 'celebrating' },
+  { emoji: '🤔', label: 'thinking' },
+  { emoji: '😤', label: 'angry/frustrated' },
+  { emoji: '🥰', label: 'loved' },
+  { emoji: '🤩', label: 'amazed' },
+  { emoji: '😱', label: 'shocked' },
+  { emoji: '😂', label: 'laughing' },
+  { emoji: '😑', label: 'nonchalant' },
+  { emoji: '🙏', label: 'blessed' },
+  { emoji: '🥱', label: 'lazy' },
 ]
 
 function ComboInput({ value, onChange, options, placeholder, maxLength }) {
@@ -110,7 +121,7 @@ export default function EntryEditor({ initial, onSave, onDelete, saving }) {
     food_type: initial?.meta?.food_type || '',
     location: initial?.meta?.location || '',
     adventure_type: initial?.meta?.adventure_type || '',
-    daily_goal: initial?.meta?.daily_goal || '',
+    activity: initial?.meta?.activity || '',
   })
   const [editorKey] = useState(0)
   const [confirmDelete, setConfirmDelete] = useState(false)
@@ -141,7 +152,7 @@ export default function EntryEditor({ initial, onSave, onDelete, saving }) {
         food_type: initial?.meta?.food_type || '',
         location: initial?.meta?.location || '',
         adventure_type: initial?.meta?.adventure_type || '',
-        daily_goal: initial?.meta?.daily_goal || '',
+        activity: initial?.meta?.activity || '',
       })
     )
   }
@@ -161,7 +172,7 @@ export default function EntryEditor({ initial, onSave, onDelete, saving }) {
   const relevantMeta = () => {
     if (category === 'food') return { food_name: meta.food_name, food_type: meta.food_type }
     if (category === 'travel') return { location: meta.location, adventure_type: meta.adventure_type }
-    if (category === 'daily') return { daily_goal: meta.daily_goal }
+    if (category === 'daily') return { activity: meta.activity }
     return null
   }
 
@@ -292,6 +303,21 @@ export default function EntryEditor({ initial, onSave, onDelete, saving }) {
             </div>
           )}
 
+          {/* Daily-specific fields */}
+          {category === 'daily' && (
+            <div className={styles.metaFields}>
+              <div className={styles.metaFieldRow}>
+                <ComboInput
+                  value={meta.activity}
+                  onChange={v => updateMeta('activity', v)}
+                  options={DAILY_ACTIVITIES}
+                  placeholder="what are you up to?..."
+                  maxLength={60}
+                />
+              </div>
+            </div>
+          )}
+
           {/* Adventure-specific fields */}
           {category === 'travel' && (
             <div className={styles.metaFields}>
@@ -328,16 +354,6 @@ export default function EntryEditor({ initial, onSave, onDelete, saving }) {
             onChange={e => setTitle(e.target.value)}
           />
 
-          {/* Daily goal — shown below title as subtitle */}
-          {category === 'daily' && (
-            <input
-              className={styles.dailyGoalInput}
-              placeholder="what's on your mind?... (optional)"
-              value={meta.daily_goal}
-              onChange={e => updateMeta('daily_goal', e.target.value)}
-              maxLength={150}
-            />
-          )}
 
           <RichEditor key={editorKey} value={body} onChange={setBody} photos={photos} />
 

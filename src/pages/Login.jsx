@@ -34,7 +34,10 @@ export default function Login() {
         <form onSubmit={submit} className={styles.form}>
           <label className={styles.label}>email</label>
           <input className={styles.input} name="email" type="email" value={form.email} onChange={handle} required placeholder="your@email.com" />
-          <label className={styles.label}>password</label>
+          <div className={styles.passwordRow}>
+            <label className={styles.label}>password</label>
+            <Link to="/forgot-password" className={styles.forgotLink}>forgot password?</Link>
+          </div>
           <input className={styles.input} name="password" type="password" value={form.password} onChange={handle} required placeholder="••••••••" />
           <button className={styles.btn} type="submit" disabled={loading}>
             {loading ? 'signing in...' : 'sign in →'}

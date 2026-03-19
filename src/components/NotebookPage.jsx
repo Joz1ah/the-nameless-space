@@ -67,12 +67,13 @@ export default function NotebookPage({ entry, index, total }) {
               {entry.meta.adventure_type && <span className={styles.entryMetaType}>{entry.meta.adventure_type}</span>}
             </div>
           )}
+          {entry.category === 'daily' && entry.meta?.activity && (
+            <div className={styles.entryMeta}>
+              <span className={styles.entryMetaType}>{entry.meta.activity}</span>
+            </div>
+          )}
 
           {entry.title && <h2 className={styles.title}>{entry.title}</h2>}
-
-          {entry.category === 'daily' && entry.meta?.daily_goal && (
-            <p className={styles.dailyGoal}>{entry.meta.daily_goal}</p>
-          )}
 
           <p className={styles.body}>{bodyPreview}</p>
 

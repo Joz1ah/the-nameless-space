@@ -162,7 +162,7 @@ export default function EntryView() {
               <button
                 className={`${styles.topBtn} ${entry.is_locked ? styles.lockActive : ''}`}
                 onClick={() => toggleLocked(id)}
-                title={entry.is_locked ? 'Unhide from readers' : 'Hide from readers'}
+                title={entry.is_locked ? 'Unhide from the public' : 'Hide from the public'}
               >
                 {entry.is_locked ? <RiEyeOffLine size={16} /> : <RiEyeLine size={16} />}
               </button>
@@ -206,11 +206,13 @@ export default function EntryView() {
                       {entry.meta.adventure_type && <span className={styles.entryMetaType}>{entry.meta.adventure_type}</span>}
                     </div>
                   )}
+                  {entry.category === 'daily' && entry.meta?.activity && (
+                    <div className={styles.entryMeta}>
+                      <span className={styles.entryMetaType}>{entry.meta.activity}</span>
+                    </div>
+                  )}
 
                   {entry.title && <h1 className={styles.title}>{entry.title}</h1>}
-                  {entry.category === 'daily' && entry.meta?.daily_goal && (
-                    <p className={styles.dailyGoal}>{entry.meta.daily_goal}</p>
-                  )}
                 </div>
                 {highlightPhoto && (
                   <div className={styles.highlightWrap} onClick={() => setLightbox({ url: highlightPhoto.url, caption: highlightPhoto.caption })}>

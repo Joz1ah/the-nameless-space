@@ -74,6 +74,11 @@
 .heartIcon { color: #e05a7a; flex-shrink: 0; }
 .thumb { width: 40px; height: 32px; object-fit: cover; border-radius: 4px; opacity: 0.85; }
 
+.categoryFilter { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 16px 6px; border-bottom: 1px solid var(--border); }
+.categoryFilterBtn { font-size: 0.72rem; padding: 4px 10px; border-radius: 16px; color: var(--ink-muted); border: 1.5px solid transparent; background: transparent; transition: all 0.12s; }
+.categoryFilterBtn:hover { background: var(--bg-2); color: var(--accent); border-color: var(--border); }
+.categoryFilterActive { background: var(--bg-2); border-color: var(--accent-soft); color: var(--accent); font-weight: 500; }
+
 .moodFilter { display: flex; flex-wrap: wrap; gap: 4px; padding: 8px 16px 4px; border-bottom: 1px solid var(--border); }
 .moodFilterBtn { width: 30px; height: 30px; border-radius: 8px; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; background: transparent; border: 1.5px solid transparent; transition: all 0.12s; }
 .moodFilterBtn:hover { background: var(--bg-2); border-color: var(--border); }

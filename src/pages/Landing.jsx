@@ -32,15 +32,15 @@ export default function Landing() {
 
       <main className={styles.main}>
         <div className={styles.hero}>
-          <div className={styles.tag}>a quiet corner of the internet</div>
+          <div className={styles.tag}>unnamed · undefined · yours</div>
           <h1 className={styles.headline}>
-            your thoughts<br />
-            <em>deserve a home</em>
+            some things don't<br />
+            <em>need a label</em>
           </h1>
           <p className={styles.sub}>
-            Not every thought needs an audience. But some do. The nameless space is your private notebook — 
-            a soft, personal place to write reflections, dump random ideas, attach photos, and revisit memories. 
-            No likes. No followers. Just you and your pages.
+            Some thoughts are too scattered to post. Too personal to categorize. Too quiet to perform —
+            but too real to lose. This is where they go. No labels, no audience, no pressure to make sense
+            of any of it. Just you and a blank page.
           </p>
           <div className={styles.cta}>
             <button className={styles.ctaPrimary} onClick={() => navigate('/signup')}>
@@ -81,17 +81,33 @@ export default function Landing() {
           <div className={styles.aboutInner}>
             <h2 className={styles.aboutTitle}>made for the overthinkers,<br /><em>the quiet documenters</em></h2>
             <p className={styles.aboutText}>
-              Some days you have something profound to say. Some days you just need to type it out before it disappears. 
-              The nameless space holds both — no judgment, no pressure, no algorithm deciding what matters.
+              Some days you have something profound to say. Some days you just need to type it out before it slips away.
+              Some days it's just a photo, a mood, a place you visited. The nameless space holds all of it — no judgment,
+              no pressure, no algorithm deciding what matters.
             </p>
             <p className={styles.aboutText}>
-              Think of it as your personal corner of the internet. A notebook that lives online, 
-              looks beautiful, and is yours alone — unless you choose to share it.
+              It's your personal corner of the internet. A notebook that lives online, looks beautiful, and is
+              completely yours — unless you choose to share it.
             </p>
             <button className={styles.ctaPrimary} onClick={() => navigate('/signup')}>
               create your space
             </button>
           </div>
+        </div>
+        {/* Why nameless */}
+        <div className={styles.why}>
+          <h2 className={styles.whyTitle}>why <em>the nameless space?</em></h2>
+          <p className={styles.whyText}>
+            Honestly — I just didn't want to name it.
+          </p>
+          <p className={styles.whyText}>
+            Names carry expectations. A name tells you what something is, what it's for, what kind of person uses it.
+            I didn't want any of that. I wanted something that could hold whatever you bring to it,
+            without deciding for you what that should be.
+          </p>
+          <p className={styles.whyText}>
+            Some spaces don't need a label. They just need to exist. So here it is.
+          </p>
         </div>
       </main>
 

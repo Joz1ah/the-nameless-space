@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { RiCloseLine, RiHeartFill, RiDraftLine, RiEyeOffLine } from 'react-icons/ri'
 import styles from './AllEntries.module.css'
-import { MOODS } from './EntryEditor'
+import { MOODS, CATEGORIES } from './EntryEditor'
 
 function formatDate(dateStr) {
   return new Date(dateStr).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
@@ -17,6 +17,7 @@ const TABS = [
 export default function AllEntries({ entries, onClose, onSelect, onSelectEntry }) {
   const [tab, setTab] = useState('published')
   const [moodFilter, setMoodFilter] = useState(null)
+  const [categoryFilter, setCategoryFilter] = useState(null)
 
   const filtered = entries.filter(e => {
     if (tab === 'published') return !e.is_draft && !e.is_locked
@@ -26,14 +27,16 @@ export default function AllEntries({ entries, onClose, onSelect, onSelectEntry }
     return true
   })
 
-  const displayed = moodFilter ? filtered.filter(e => e.mood === moodFilter) : filtered
+  const displayed = filtered
+    .filter(e => !categoryFilter || e.category === categoryFilter)
+    .filter(e => !moodFilter || e.mood === moodFilter)
 
   const publishedEntries = entries.filter(e => !e.is_draft)
 
   const emptyMsg = {
     published: 'no entries yet',
     favorites: 'no favorites yet — heart an entry to save it here',
-    hidden: 'no hidden entries — use the eye icon on any entry to hide it from readers',
+    hidden: 'no hidden entries — use the eye icon on any entry to hide it from the public',
     drafts: 'no drafts',
   }
 
@@ -51,6 +54,19 @@ export default function AllEntries({ entries, onClose, onSelect, onSelectEntry }
               className={`${styles.tab} ${tab === t.key ? styles.tabActive : ''}`}
               onClick={() => setTab(t.key)}>
               {t.label}
+            </button>
+          ))}
+        </div>
+
+        <div className={styles.categoryFilter}>
+          {CATEGORIES.map(c => (
+            <button
+              key={c.key}
+              className={`${styles.categoryFilterBtn} ${categoryFilter === c.key ? styles.categoryFilterActive : ''}`}
+              title={c.label}
+              onClick={() => setCategoryFilter(prev => prev === c.key ? null : c.key)}
+            >
+              {c.emoji} {c.label}
             </button>
           ))}
         </div>

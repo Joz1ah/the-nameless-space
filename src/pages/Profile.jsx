@@ -14,7 +14,7 @@ export default function Profile() {
     full_name: profile?.full_name || '',
     nickname: profile?.nickname || '',
     bio: profile?.bio || '',
-    email_contact: profile?.email_contact || '',
+    email_contact: profile?.email_contact || user?.email || '',
     website: profile?.website || '',
     instagram: profile?.instagram || '',
     twitter: profile?.twitter || '',
@@ -198,7 +198,7 @@ export default function Profile() {
           <div className={styles.fieldMeta}><span className={styles.charCount}>{form.bio.length}/{LIMITS.bio}</span></div>
 
           <div className={styles.section}>contact & links</div>
-          <label className={styles.label}>email (shown to readers)</label>
+          <label className={styles.label}>email (shown to the public)</label>
           <input className={`${styles.input} ${formErrors.email_contact ? styles.inputError : ''}`} name="email_contact" value={form.email_contact} onChange={handle} placeholder="contact@email.com" />
           {formErrors.email_contact && <p className={styles.fieldErr}>{formErrors.email_contact}</p>}
 
@@ -215,7 +215,7 @@ export default function Profile() {
           {formErrors.twitter && <p className={styles.fieldErr}>{formErrors.twitter}</p>}
 
           <div className={styles.section}>buy me a coffee</div>
-          <label className={styles.label}>QR code image <span className={styles.hint}>(shown to visitors as a modal)</span></label>
+          <label className={styles.label}>QR code image <span className={styles.hint}>(shown to the public as a modal)</span></label>
           <div className={styles.qrRow}>
             {profile?.qr_url && <img src={profile.qr_url} alt="QR" className={styles.qrThumb} />}
             <button type="button" className={styles.qrUploadBtn} onClick={() => qrRef.current.click()} disabled={uploadingQR}>

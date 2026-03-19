@@ -6,6 +6,8 @@ import { useAuth } from './hooks/useAuth'
 import Landing from './pages/Landing'
 import Login from './pages/Login'
 import SignUp from './pages/SignUp'
+import ForgotPassword from './pages/ForgotPassword'
+import ResetPassword from './pages/ResetPassword'
 import Home from './pages/Home'
 import EntryView from './pages/EntryView'
 import NewEntry from './pages/NewEntry'
@@ -44,6 +46,8 @@ export default function App() {
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           {/* Public blog view */}
           <Route path="/u/:slug" element={<PublicBlog />} />
           <Route path="/u/:slug/entry/:id" element={<PublicEntryView />} />

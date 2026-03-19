@@ -12,12 +12,20 @@ export default function SignUp() {
 
   const handle = e => setForm(f => ({ ...f, [e.target.name]: e.target.value }))
 
+  const validatePassword = (pw) => {
+    if (pw.length < 8) return 'Password must be at least 8 characters'
+    if (!/[A-Z]/.test(pw)) return 'Password must include at least one capital letter'
+    if (!/[0-9]/.test(pw)) return 'Password must include at least one number'
+    return null
+  }
+
   const submit = async e => {
     e.preventDefault()
     setError('')
-    if (form.password !== form.confirm) { setError('Passwords do not match'); return }
-    if (form.password.length < 6) { setError('Password must be at least 6 characters'); return }
     if (!form.nickname.trim()) { setError('Nickname is required'); return }
+    const pwError = validatePassword(form.password)
+    if (pwError) { setError(pwError); return }
+    if (form.password !== form.confirm) { setError('Passwords do not match'); return }
     setLoading(true)
     try {
       await signUp({ email: form.email, password: form.password, fullName: form.fullName, nickname: form.nickname })
@@ -42,7 +50,7 @@ export default function SignUp() {
           <input className={styles.input} name="nickname" type="text" value={form.nickname} onChange={handle} required placeholder="e.g. josie" />
           <label className={styles.label}>email</label>
           <input className={styles.input} name="email" type="email" value={form.email} onChange={handle} required placeholder="your@email.com" />
-          <label className={styles.label}>password <span className={styles.hint}>(min. 6 characters)</span></label>
+          <label className={styles.label}>password <span className={styles.hint}>(8+ chars, one capital, one number)</span></label>
           <input className={styles.input} name="password" type="password" value={form.password} onChange={handle} required placeholder="••••••••" />
           <label className={styles.label}>confirm password</label>
           <input className={styles.input} name="confirm" type="password" value={form.confirm} onChange={handle} required placeholder="••••••••" />
