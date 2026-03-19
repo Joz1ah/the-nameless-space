@@ -132,8 +132,27 @@ export default function PublicBlog() {
                       </div>
                     )}
                     <div className={styles.cardBody}>
-                      <span className={styles.cardDate}>{formatDate(entry.created_at)}</span>
-                      {entry.mood && <span className={styles.cardMood}>{entry.mood}</span>}
+                      <div className={styles.cardDateRow}>
+                        <span className={styles.cardDate}>{formatDate(entry.created_at)}</span>
+                        {entry.mood && <span className={styles.cardMood}>{entry.mood}</span>}
+                      </div>
+                      {entry.category === 'food' && (entry.meta?.food_name || entry.meta?.food_type) && (
+                        <div className={styles.cardMeta}>
+                          {entry.meta.food_name && <span className={styles.cardMetaName}>{entry.meta.food_name}</span>}
+                          {entry.meta.food_type && <span className={styles.cardMetaType}>{entry.meta.food_type}</span>}
+                        </div>
+                      )}
+                      {entry.category === 'travel' && (entry.meta?.location || entry.meta?.adventure_type) && (
+                        <div className={styles.cardMeta}>
+                          {entry.meta.location && <span className={styles.cardMetaName}>📍 {entry.meta.location}</span>}
+                          {entry.meta.adventure_type && <span className={styles.cardMetaType}>{entry.meta.adventure_type}</span>}
+                        </div>
+                      )}
+                      {entry.category === 'daily' && entry.meta?.activity && (
+                        <div className={styles.cardMeta}>
+                          <span className={styles.cardMetaType}>{entry.meta.activity}</span>
+                        </div>
+                      )}
                       {entry.title && <h3 className={styles.cardTitle}>{entry.title}</h3>}
                       <p className={styles.cardPreview}>{preview.length > 200 ? preview.slice(0, 200) + '…' : preview}</p>
                       <span className={styles.readMore}>read →</span>

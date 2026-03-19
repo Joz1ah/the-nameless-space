@@ -103,7 +103,25 @@ export default function PublicEntryView() {
                 <div className={styles.meta}>
                   <span className={styles.date}>{formatDate(entry.created_at)}</span>
                   <span className={styles.time}>{formatTime(entry.created_at)}</span>
+                  {entry.mood && <span className={styles.moodBadge}>{entry.mood}</span>}
                 </div>
+                {entry.category === 'food' && (entry.meta?.food_name || entry.meta?.food_type) && (
+                  <div className={styles.entryMeta}>
+                    {entry.meta.food_name && <span className={styles.entryMetaName}>{entry.meta.food_name}</span>}
+                    {entry.meta.food_type && <span className={styles.entryMetaType}>{entry.meta.food_type}</span>}
+                  </div>
+                )}
+                {entry.category === 'travel' && (entry.meta?.location || entry.meta?.adventure_type) && (
+                  <div className={styles.entryMeta}>
+                    {entry.meta.location && <span className={styles.entryMetaName}>📍 {entry.meta.location}</span>}
+                    {entry.meta.adventure_type && <span className={styles.entryMetaType}>{entry.meta.adventure_type}</span>}
+                  </div>
+                )}
+                {entry.category === 'daily' && entry.meta?.activity && (
+                  <div className={styles.entryMeta}>
+                    <span className={styles.entryMetaType}>{entry.meta.activity}</span>
+                  </div>
+                )}
                 {entry.title && <h1 className={styles.title}>{entry.title}</h1>}
               </div>
               {highlightPhoto && (

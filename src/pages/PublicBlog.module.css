@@ -144,4 +144,8 @@
 .qrSub { font-size: 0.8rem; color: var(--ink-muted); margin-bottom: 20px; line-height: 1.5; }
 .qrImage { width: 100%; max-width: 220px; border-radius: 8px; box-shadow: 0 2px 12px rgba(0,0,0,0.12); }
 
-.cardMood { font-size: 1rem; line-height: 1; margin-left: 6px; vertical-align: middle; }
+.cardDateRow { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+.cardMood { font-size: 0.95rem; line-height: 1; }
+.cardMeta { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; flex-wrap: wrap; }
+.cardMetaName { font-size: 0.76rem; color: var(--ink); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px; }
+.cardMetaType { font-size: 0.68rem; color: var(--ink-muted); font-style: italic; background: var(--bg-2); padding: 1px 7px; border-radius: 10px; white-space: nowrap; }

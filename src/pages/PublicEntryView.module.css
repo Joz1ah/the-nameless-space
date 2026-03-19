@@ -29,6 +29,10 @@
 .meta { display:flex; align-items:baseline; gap:10px; margin-bottom:10px; flex-wrap:wrap; }
 .date { font-size:0.72rem; color:var(--accent); letter-spacing:0.08em; text-transform:uppercase; }
 .time { font-size:0.72rem; color:var(--ink-muted); }
+.moodBadge { font-size:1rem; line-height:1; }
+.entryMeta { display:flex; align-items:center; gap:6px; margin-bottom:6px; flex-wrap:wrap; }
+.entryMetaName { font-size:0.76rem; color:var(--ink); font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:200px; }
+.entryMetaType { font-size:0.68rem; color:var(--ink-muted); font-style:italic; background:var(--bg-2); padding:1px 7px; border-radius:10px; white-space:nowrap; }
 .title { font-family:var(--font-title); font-size:1.9rem; font-weight:600; font-style:italic; color:var(--ink); line-height:1.2; margin:0; }
 .highlightWrap { flex-shrink:0; background:white; padding:7px 7px 32px; box-shadow:0 4px 16px rgba(0,0,0,0.13); border-radius:2px; transform:rotate(1.8deg); cursor:zoom-in; transition:transform 0.2s; width:168px; }
 .highlightWrap:hover { transform:rotate(0deg) scale(1.03); }
