@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { RiCloseLine, RiHeartFill, RiDraftLine, RiEyeOffLine } from 'react-icons/ri'
 import styles from './AllEntries.module.css'
+import { MOODS } from './EntryEditor'
 
 function formatDate(dateStr) {
   return new Date(dateStr).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
@@ -15,6 +16,7 @@ const TABS = [
 
 export default function AllEntries({ entries, onClose, onSelect, onSelectEntry }) {
   const [tab, setTab] = useState('published')
+  const [moodFilter, setMoodFilter] = useState(null)
 
   const filtered = entries.filter(e => {
     if (tab === 'published') return !e.is_draft && !e.is_locked
@@ -24,12 +26,14 @@ export default function AllEntries({ entries, onClose, onSelect, onSelectEntry }
     return true
   })
 
+  const displayed = moodFilter ? filtered.filter(e => e.mood === moodFilter) : filtered
+
   const publishedEntries = entries.filter(e => !e.is_draft)
 
   const emptyMsg = {
     published: 'no entries yet',
     favorites: 'no favorites yet — heart an entry to save it here',
-    hidden: 'no hidden entries — use the ⋯ menu on any entry to hide it from visitors',
+    hidden: 'no hidden entries — use the eye icon on any entry to hide it from readers',
     drafts: 'no drafts',
   }
 
@@ -51,11 +55,24 @@ export default function AllEntries({ entries, onClose, onSelect, onSelectEntry }
           ))}
         </div>
 
+        <div className={styles.moodFilter}>
+          {MOODS.map(m => (
+            <button
+              key={m.emoji}
+              className={`${styles.moodFilterBtn} ${moodFilter === m.emoji ? styles.moodFilterActive : ''}`}
+              title={m.label}
+              onClick={() => setMoodFilter(prev => prev === m.emoji ? null : m.emoji)}
+            >
+              {m.emoji}
+            </button>
+          ))}
+        </div>
+
         <div className={styles.list}>
-          {filtered.length === 0 && (
+          {displayed.length === 0 && (
             <p className={styles.empty}>{emptyMsg[tab]}</p>
           )}
-          {filtered.map((entry) => {
+          {displayed.map((entry) => {
             const pubIdx = publishedEntries.findIndex(e => e.id === entry.id)
             return (
               <button key={entry.id} className={styles.item}
@@ -78,6 +95,7 @@ export default function AllEntries({ entries, onClose, onSelect, onSelectEntry }
                 </div>
                 <div className={styles.itemRight}>
                   {entry.is_favorite && <RiHeartFill size={13} className={styles.heartIcon} />}
+                  {entry.mood && <span className={styles.itemMood}>{entry.mood}</span>}
                   {entry.entry_photos?.find(p => p.is_highlight) && (
                     <img className={styles.thumb}
                       src={entry.entry_photos.find(p => p.is_highlight).url} alt="thumb" />

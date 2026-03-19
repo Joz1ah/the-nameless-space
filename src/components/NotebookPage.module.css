@@ -49,7 +49,7 @@
   display: flex;
   flex-direction: row;
   padding: 26px 32px 28px 58px; /* left pad clears the margin line */
-  min-height: 260px;
+  min-height: 380px;
   position: relative;
 }
 
@@ -89,11 +89,32 @@
 .date { font-size: 0.7rem; color: var(--accent); letter-spacing: 0.06em; text-transform: uppercase; font-weight: 500; }
 .time { font-size: 0.7rem; color: var(--ink-muted); }
 
+/* category meta — below date/time */
+.entryMeta {
+  display: flex; align-items: center; gap: 6px;
+  margin-bottom: 6px; flex-wrap: wrap;
+}
+.entryMetaName {
+  font-size: 0.76rem; color: var(--ink); font-weight: 500;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px;
+}
+.entryMetaType {
+  font-size: 0.68rem; color: var(--ink-muted); font-style: italic;
+  background: var(--bg-2); padding: 1px 7px; border-radius: 10px;
+  white-space: nowrap;
+}
+.dailyGoal {
+  font-size: 0.8rem; color: var(--ink-muted); font-style: italic;
+  margin-bottom: 6px; margin-top: -2px; line-height: 1.4;
+  overflow: hidden; text-overflow: ellipsis;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+}
+
 .title {
   font-family: var(--font-title); font-size: 1.45rem;
   font-weight: 600; font-style: italic;
   color: var(--ink); line-height: 1.25;
-  margin-bottom: 8px;
+  margin-bottom: 30px;
 }
 
 .body {
@@ -142,9 +163,25 @@
 }
 
 @media (max-width: 600px) {
-  .inner { padding: 20px 16px 20px 52px; }
-  .highlightWrap { width: 92px; margin-left: 10px; }
-  .highlightImg { width: 80px; height: 66px; }
-  .title { font-size: 1.2rem; }
-  .body { font-size: 0.83rem; }
+  .inner { padding: 18px 14px 18px 52px; min-height: 300px; }
+  /* shrink highlight photo so title has room */
+  .highlightWrap { width: 88px; margin-left: 10px; padding: 5px 5px 22px; }
+  .highlightImg { width: 78px; height: 62px; }
+  .title { font-size: 1.15rem; }
+  .body { font-size: 0.84rem; line-height: 1.75; }
 }
+
+/* stack photo above content only on very small screens */
+@media (max-width: 360px) {
+  .inner { flex-direction: column; gap: 10px; }
+  .highlightWrap {
+    order: -1;
+    width: 100%; margin-left: 0;
+    padding: 6px 6px 22px;
+    transform: rotate(0.5deg);
+    align-self: stretch;
+  }
+  .highlightImg { width: 100%; height: 140px; object-fit: cover; }
+}
+
+.moodBadge { font-size: 1rem; line-height: 1; }

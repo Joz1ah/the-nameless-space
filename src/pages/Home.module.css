@@ -216,3 +216,26 @@
   font-family: var(--font-body);
 }
 .greetBtn:hover { background: var(--bg-2); }
+
+/* category tabs — same pill style as greetBtn */
+.categoryTabs {
+  display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+}
+.catTab {
+  font-size: 0.78rem; color: var(--accent);
+  padding: 6px 18px; border-radius: 20px;
+  border: 1px solid var(--accent-soft);
+  background: transparent; transition: all 0.2s;
+  font-family: var(--font-body);
+}
+.catTab:hover { background: var(--bg-2); }
+.catTabActive {
+  background: var(--bg-2);
+  border-color: var(--accent);
+  font-weight: 500;
+}
+
+@media (max-width: 600px) {
+  .categoryTabs { gap: 6px; }
+  .catTab { padding: 5px 14px; font-size: 0.75rem; }
+}

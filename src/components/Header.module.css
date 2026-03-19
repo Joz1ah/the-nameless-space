@@ -67,8 +67,8 @@
 }
 .newBtn:hover { background: var(--accent-hover); transform: translateY(-1px); }
 
-/* Mobile breakpoint */
-@media (max-width: 640px) {
+/* Tablet + mobile breakpoint */
+@media (max-width: 900px) {
   .header { padding: 12px 16px; }
   .title { font-size: 1.25rem; }
   .subtitle { display: none; }
@@ -78,22 +78,60 @@
   .newBtn { width: 34px; height: 34px; border-radius: 50%; padding: 0; justify-content: center; }
 }
 
-/* Share button copy animation */
-.shareIcon {
+/* Active icon state */
+.iconBtnActive { background: var(--bg-2); color: var(--accent); }
+
+/* Share dropdown */
+.shareWrap { position: relative; }
+.shareDropdown {
+  position: absolute; top: calc(100% + 8px); right: 0;
+  background: var(--page); border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 8px 24px var(--page-shadow);
+  animation: popIn 0.15s ease;
+  z-index: 200;
+  min-width: 300px;
+  padding: 10px 12px;
+}
+.shareDropdownMobile {
+  position: fixed;
+  top: 56px;
+  left: 12px;
+  right: 12px;
+  min-width: unset;
+}
+
+.slugRow {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.slugField {
+  display: flex; align-items: center;
+  flex: 1; min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--bg);
+}
+.slugOrigin {
+  font-size: 0.72rem; color: var(--ink-muted);
+  padding: 6px 6px 6px 10px;
+  white-space: nowrap; flex-shrink: 0;
+  border-right: 1px solid var(--border);
+  background: var(--bg-2);
+}
+.slugInput {
+  flex: 1; min-width: 0;
+  font-size: 0.8rem; color: var(--ink);
+  background: transparent; border: none; outline: none;
+  padding: 6px 8px;
+  font-family: var(--font-body);
+}
+.copyBtn {
+  width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
-  transition: transform 0.2s ease, color 0.2s ease;
+  border: 1px solid var(--border); color: var(--ink-muted);
+  background: transparent; transition: all 0.15s;
 }
-.copied .shareIcon {
-  transform: scale(1.15);
-  color: #27ae60 !important;
-}
-.copied {
-  color: #27ae60 !important;
-  border-color: #a8d5b5 !important;
-  background: #f0fff4 !important;
-  animation: copiedPop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-@keyframes copiedPop {
-  from { transform: scale(0.85); }
-  to   { transform: scale(1); }
-}
+.copyBtn:hover { background: var(--bg-2); color: var(--accent); border-color: var(--accent-soft); }
+.copyBtnDone { color: #27ae60 !important; border-color: #a8d5b5 !important; background: #f0fff4 !important; }
+.slugErr { font-size: 0.7rem; color: #c0392b; margin: 0; width: 100%; }

@@ -4,9 +4,11 @@
 .dot { width:34px; height:34px; border-radius:50%; border:2.5px solid var(--accent-soft); border-top-color:var(--accent); animation:spin 0.8s linear infinite; }
 @keyframes spin { to { transform:rotate(360deg); } }
 .notFound { min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; color:var(--ink-muted); font-style:italic; }
-.topBar { width:100%; max-width:720px; margin-bottom:20px; }
+.topBar { width:100%; max-width:720px; margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; }
 .backBtn { display:flex; align-items:center; gap:8px; font-size:0.8rem; color:var(--ink-muted); padding:8px 14px; border-radius:20px; transition:all 0.2s; }
 .backBtn:hover { color:var(--accent); background:var(--bg-2); }
+.themeToggle { width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--ink-muted); transition:all 0.15s; background:transparent; }
+.themeToggle:hover { background:var(--bg-2); color:var(--accent); }
 .pageWrap { width:100%; max-width:720px; }
 .page {
   position: relative;
@@ -45,9 +47,8 @@
 .lightboxCaption { font-family:var(--font-hand); font-size:0.9rem; color:rgba(255,255,255,0.7); margin-top:12px; }
 .lightboxClose { position:fixed; top:16px; right:16px; color:white; width:40px; height:40px; border-radius:50%; background:rgba(255,255,255,0.15); display:flex; align-items:center; justify-content:center; z-index:10; }
 @media (max-width: 600px) {
-  .shell { padding: 12px 10px 60px; }
-  .content { padding: 24px 16px 28px 48px; }
-  .margin { left: 20px; }
+  .shell { padding: 10px 10px 60px; }
+  .content { padding: 20px 16px 24px 46px; }
   .page {
     background-image:
       linear-gradient(
@@ -64,9 +65,18 @@
         rgba(180, 155, 165, 0.13) 31px,
         rgba(180, 155, 165, 0.13) 32px
       );
-    background-position: 0 0, 0 100px;
+    background-position: 0 0, 0 80px;
   }
-  .highlightWrap { width: 108px; }
-  .highlightWrap img { width: 94px; height: 78px; }
-  .title { font-size: 1.45rem; }
+  /* keep side-by-side but shrink the photo */
+  .headerRow { gap: 12px; padding-right: 0; }
+  .highlightWrap { width: 96px; transform: rotate(1deg); }
+  .highlightWrap img { width: 82px; height: 66px; }
+  .title { font-size: 1.3rem; }
+}
+
+/* only stack photo below title on very small screens */
+@media (max-width: 360px) {
+  .headerRow { flex-direction: column; gap: 14px; }
+  .highlightWrap { width: 100%; transform: rotate(0.4deg); }
+  .highlightWrap img { width: 100%; height: 160px; object-fit: cover; }
 }

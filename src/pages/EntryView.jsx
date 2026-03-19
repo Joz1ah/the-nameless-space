@@ -3,9 +3,10 @@ import { useEntries } from '../hooks/useEntries'
 import { useAuthContext } from '../App'
 import { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
-import { RiArrowLeftLine, RiCloseLine, RiHeartLine, RiHeartFill, RiEditLine, RiEyeOffLine, RiEyeLine } from 'react-icons/ri'
+import { RiArrowLeftLine, RiCloseLine, RiHeartLine, RiHeartFill, RiEditLine, RiEyeOffLine, RiEyeLine, RiDeleteBinLine } from 'react-icons/ri'
 import EntryFAB from '../components/EntryFAB'
 import styles from './EntryView.module.css'
+import { MOODS } from '../components/EntryEditor'
 
 function formatDate(d) {
   return new Date(d).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
@@ -51,6 +52,8 @@ export default function EntryView() {
   const [lightbox, setLightbox] = useState(null)
   const [navDir, setNavDir] = useState(null)
   const [visible, setVisible] = useState(true)
+  const [confirmDelete, setConfirmDelete] = useState(false)
+  const [deleting, setDeleting] = useState(false)
   const richBodyRef = useRef(null)
 
   const entryIndex = entries.findIndex(e => e.id === id)
@@ -81,10 +84,10 @@ export default function EntryView() {
 
   const navigateTo = (targetId, dir) => { setNavDir(dir); setVisible(false); setTimeout(() => navigate(`/entry/${targetId}`), 280) }
 
-  const handleDelete = async () => {
-    if (!window.confirm('delete this entry? this cannot be undone.')) return
-    await deleteEntry(id)
-    navigate('/notebook')
+  const doDelete = async () => {
+    setDeleting(true)
+    try { await deleteEntry(id); navigate('/notebook') }
+    finally { setDeleting(false); setConfirmDelete(false) }
   }
 
   if (!entry) return (
@@ -92,6 +95,7 @@ export default function EntryView() {
   )
 
   const isDraft = entry.is_draft
+  const moodObj = entry.mood ? MOODS.find(m => m.emoji === entry.mood) : null
   const photos = (entry.entry_photos || []).sort((a, b) => (a.position || 0) - (b.position || 0))
   const highlightPhoto = photos.find(p => p.is_highlight) || null
   const nonHighlightPhotos = photos.filter(p => !p.is_highlight)
@@ -124,10 +128,52 @@ export default function EntryView() {
           </div>
         )}
 
+        {confirmDelete && (
+          <div className={styles.confirmOverlay} onClick={() => setConfirmDelete(false)}>
+            <div className={styles.confirmCard} onClick={e => e.stopPropagation()}>
+              <h3 className={styles.confirmTitle}>delete this entry?</h3>
+              <p className={styles.confirmSub}>this cannot be undone. your words will be gone forever.</p>
+              <div className={styles.confirmActions}>
+                <button className={styles.confirmCancel} onClick={() => setConfirmDelete(false)}>cancel</button>
+                <button className={styles.confirmDelete} onClick={doDelete} disabled={deleting}>
+                  {deleting ? <span className={styles.spinner} /> : null}
+                  {deleting ? 'deleting...' : 'yes, delete'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className={styles.topBar}>
           <button className={styles.backBtn} onClick={() => navigate('/notebook')}>
             <RiArrowLeftLine size={18} /><span>back to notebook</span>
           </button>
+          <div className={styles.topActions}>
+            {!isDraft && (
+              <button
+                className={`${styles.topBtn} ${entry.is_favorite ? styles.heartActive : ''}`}
+                onClick={() => toggleFavorite(id)}
+                title={entry.is_favorite ? 'Remove from favorites' : 'Add to favorites'}
+              >
+                {entry.is_favorite ? <RiHeartFill size={16} /> : <RiHeartLine size={16} />}
+              </button>
+            )}
+            {!isDraft && (
+              <button
+                className={`${styles.topBtn} ${entry.is_locked ? styles.lockActive : ''}`}
+                onClick={() => toggleLocked(id)}
+                title={entry.is_locked ? 'Unhide from readers' : 'Hide from readers'}
+              >
+                {entry.is_locked ? <RiEyeOffLine size={16} /> : <RiEyeLine size={16} />}
+              </button>
+            )}
+            <button className={styles.topBtn} onClick={() => navigate(`/edit/${id}`)} title="Edit entry">
+              <RiEditLine size={16} />
+            </button>
+            <button className={`${styles.topBtn} ${styles.deleteBtn}`} onClick={() => setConfirmDelete(true)} title="Delete entry">
+              <RiDeleteBinLine size={16} />
+            </button>
+          </div>
         </div>
 
         {isDraft && <div className={styles.draftBanner}>✎ draft — not shown in the main notebook</div>}
@@ -137,47 +183,34 @@ export default function EntryView() {
           <div className={styles.page}>
             <div className={styles.margin} aria-hidden="true" />
 
-            {/* Corner stack — direct child of .page so it's never clipped by .content overflow */}
-            <div className={styles.cornerStack}>
-              {isDraft ? (
-                <button className={styles.cornerBtn} onClick={() => navigate(`/edit/${id}`)} title="Edit draft">
-                  <RiEditLine size={14} />
-                </button>
-              ) : (
-                <>
-                  <button
-                    className={`${styles.cornerBtn} ${entry.is_favorite ? styles.heartActive : ''}`}
-                    onClick={() => toggleFavorite(id)}
-                    title={entry.is_favorite ? 'Remove from favorites' : 'Add to favorites'}
-                  >
-                    {entry.is_favorite ? <RiHeartFill size={14} /> : <RiHeartLine size={14} />}
-                  </button>
-                  <button
-                    className={`${styles.cornerBtn} ${entry.is_locked ? styles.lockActive : ''}`}
-                    onClick={() => toggleLocked(id)}
-                    title={entry.is_locked ? 'Unhide from visitors' : 'Hide from visitors'}
-                  >
-                    {entry.is_locked ? <RiEyeOffLine size={14} /> : <RiEyeLine size={14} />}
-                  </button>
-                  <button
-                    className={styles.cornerBtn}
-                    onClick={() => navigate(`/edit/${id}`)}
-                    title="Edit entry"
-                  >
-                    <RiEditLine size={14} />
-                  </button>
-                </>
-              )}
-            </div>
-
             <div className={styles.content}>
               <div className={styles.headerRow}>
                 <div className={styles.headerLeft}>
                   <div className={styles.meta}>
                     <span className={styles.date}>{formatDate(entry.created_at)}</span>
                     <span className={styles.time}>{formatTime(entry.created_at)}</span>
+                    {moodObj && (
+                      <span className={styles.moodBadge} title={moodObj.label}>{moodObj.emoji}</span>
+                    )}
                   </div>
+
+                  {entry.category === 'food' && (entry.meta?.food_name || entry.meta?.food_type) && (
+                    <div className={styles.entryMeta}>
+                      {entry.meta.food_name && <span className={styles.entryMetaName}>{entry.meta.food_name}</span>}
+                      {entry.meta.food_type && <span className={styles.entryMetaType}>{entry.meta.food_type}</span>}
+                    </div>
+                  )}
+                  {entry.category === 'travel' && (entry.meta?.location || entry.meta?.adventure_type) && (
+                    <div className={styles.entryMeta}>
+                      {entry.meta.location && <span className={styles.entryMetaName}>📍 {entry.meta.location}</span>}
+                      {entry.meta.adventure_type && <span className={styles.entryMetaType}>{entry.meta.adventure_type}</span>}
+                    </div>
+                  )}
+
                   {entry.title && <h1 className={styles.title}>{entry.title}</h1>}
+                  {entry.category === 'daily' && entry.meta?.daily_goal && (
+                    <p className={styles.dailyGoal}>{entry.meta.daily_goal}</p>
+                  )}
                 </div>
                 {highlightPhoto && (
                   <div className={styles.highlightWrap} onClick={() => setLightbox({ url: highlightPhoto.url, caption: highlightPhoto.caption })}>

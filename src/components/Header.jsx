@@ -1,32 +1,66 @@
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTheme } from '../App'
 import { useAuthContext } from '../App'
-import { RiMoonLine, RiSunLine, RiAddLine, RiListCheck2, RiUserLine, RiMoreLine, RiShareLine, RiCheckLine } from 'react-icons/ri'
+import { supabase } from '../supabase/client'
+import { RiMoonLine, RiSunLine, RiAddLine, RiListCheck2, RiUserLine, RiMoreLine, RiShareLine, RiFileCopyLine, RiCheckLine } from 'react-icons/ri'
 import styles from './Header.module.css'
 
 export default function Header({ onRandomPage, hasEntries, onShowAll }) {
   const { theme, toggleTheme } = useTheme()
-  const { profile } = useAuthContext()
+  const { profile, updateProfile } = useAuthContext()
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
+  const [shareOpen, setShareOpen] = useState(false)
+  const [slugDraft, setSlugDraft] = useState('')
+  const [slugError, setSlugError] = useState('')
   const [copied, setCopied] = useState(false)
   const menuRef = useRef(null)
 
-  // Close dropdown when clicking outside
+  // Sync slug draft when profile loads
+  useEffect(() => { setSlugDraft(profile?.slug || '') }, [profile?.slug])
+
+  // Close dropdowns on outside click
   useEffect(() => {
-    const handler = e => { if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(false) }
+    const handler = e => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(false)
+      // Use data-share attribute so both desktop + mobile containers are covered
+      if (!e.target.closest('[data-share]')) { setShareOpen(false); setSlugError('') }
+    }
     document.addEventListener('mousedown', handler)
     return () => document.removeEventListener('mousedown', handler)
   }, [])
 
-  const shareUrl = profile?.slug ? `${window.location.origin}/u/${profile.slug}` : null
+  const origin = window.location.origin
+  const shareUrl = profile?.slug ? `${origin}/u/${profile.slug}` : null
+
+  const copyUrl = () => {
+    const slug = slugDraft.trim() || profile?.slug
+    if (!slug) return
+    navigator.clipboard.writeText(`${origin}/u/${slug}`)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  const saveSlug = async () => {
+    const val = slugDraft.trim()
+    if (!val || val === profile?.slug) return
+    setSlugError('')
+    try {
+      const { data } = await supabase.from('profiles').select('id').eq('slug', val).neq('id', profile.id)
+      if (data?.length > 0) { setSlugError('already taken'); return }
+      await updateProfile({ slug: val })
+    } catch { setSlugError('could not save') }
+  }
+
+  const handleSlugKey = e => {
+    if (e.key === 'Enter') { e.target.blur(); saveSlug() }
+  }
 
   const menuItems = [
-    hasEntries && onRandomPage && { icon: '✦', label: 'random page', action: () => { onRandomPage(); setMenuOpen(false) } },
     hasEntries && onShowAll && { icon: <RiListCheck2 size={15} />, label: 'all entries', action: () => { onShowAll(); setMenuOpen(false) } },
     { icon: <RiUserLine size={15} />, label: 'profile', action: () => { navigate('/profile'); setMenuOpen(false) } },
-    shareUrl && { icon: <RiShareLine size={15} />, label: 'share blog', action: () => { navigator.clipboard.writeText(shareUrl); setCopied(true); setTimeout(() => setCopied(false), 2000); setMenuOpen(false) } },
+    shareUrl && { icon: <RiShareLine size={15} />, label: 'share blog', action: () => { setMenuOpen(false); setShareOpen(o => !o) } },
     { icon: theme === 'light' ? <RiMoonLine size={15} /> : <RiSunLine size={15} />, label: theme === 'light' ? 'dark mode' : 'light mode', action: () => { toggleTheme(); setMenuOpen(false) } },
   ].filter(Boolean)
 
@@ -42,11 +76,6 @@ export default function Header({ onRandomPage, hasEntries, onShowAll }) {
       <div className={styles.right}>
         {/* Desktop icons */}
         <div className={styles.desktopIcons}>
-          {hasEntries && onRandomPage && (
-            <button className={styles.iconBtn} onClick={onRandomPage} title="Random page">
-              <span className={styles.diceIcon}>✦</span>
-            </button>
-          )}
           {hasEntries && onShowAll && (
             <button className={styles.iconBtn} onClick={onShowAll} title="All entries">
               <RiListCheck2 size={18} />
@@ -59,20 +88,52 @@ export default function Header({ onRandomPage, hasEntries, onShowAll }) {
             <RiUserLine size={18} />
           </button>
           {shareUrl && (
-            <button
-              className={`${styles.iconBtn} ${copied ? styles.copied : ''}`}
-              onClick={() => { navigator.clipboard.writeText(shareUrl); setCopied(true); setTimeout(() => setCopied(false), 2000) }}
-              title="Copy share link">
-              <span className={styles.shareIcon}>
-                {copied ? <RiCheckLine size={18} /> : <RiShareLine size={18} />}
-              </span>
-            </button>
+            <div className={styles.shareWrap} data-share>
+              <button
+                className={`${styles.iconBtn} ${shareOpen ? styles.iconBtnActive : ''}`}
+                onClick={() => { setShareOpen(o => !o); setSlugError('') }}
+                title="Share blog">
+                <RiShareLine size={18} />
+              </button>
+              {shareOpen && (
+                <div className={styles.shareDropdown}>
+                  <SlugRow
+                    origin={origin}
+                    slug={slugDraft}
+                    onSlugChange={v => { setSlugDraft(v.toLowerCase().replace(/[^a-z0-9-]/g, '')); setSlugError('') }}
+                    onBlur={saveSlug}
+                    onKeyDown={handleSlugKey}
+                    onCopy={copyUrl}
+                    copied={copied}
+                    error={slugError}
+                  />
+                </div>
+              )}
+            </div>
           )}
         </div>
 
-        {/* Mobile: new entry + menu */}
-        <div className={styles.mobileIcons} ref={menuRef}>
-          <div className={styles.menuWrap}>
+        {/* Mobile: menu + share panel */}
+        <div className={styles.mobileIcons}>
+          {shareUrl && (
+            <div className={styles.shareWrap} data-share>
+              {shareOpen && (
+                <div className={`${styles.shareDropdown} ${styles.shareDropdownMobile}`}>
+                  <SlugRow
+                    origin={origin}
+                    slug={slugDraft}
+                    onSlugChange={v => { setSlugDraft(v.toLowerCase().replace(/[^a-z0-9-]/g, '')); setSlugError('') }}
+                    onBlur={saveSlug}
+                    onKeyDown={handleSlugKey}
+                    onCopy={copyUrl}
+                    copied={copied}
+                    error={slugError}
+                  />
+                </div>
+              )}
+            </div>
+          )}
+          <div className={styles.menuWrap} ref={menuRef}>
             <button className={styles.iconBtn} onClick={() => setMenuOpen(o => !o)} title="Menu">
               <RiMoreLine size={20} />
             </button>
@@ -95,5 +156,27 @@ export default function Header({ onRandomPage, hasEntries, onShowAll }) {
         </button>
       </div>
     </header>
+  )
+}
+
+function SlugRow({ origin, slug, onSlugChange, onBlur, onKeyDown, onCopy, copied, error }) {
+  return (
+    <div className={styles.slugRow}>
+      <div className={styles.slugField}>
+        <span className={styles.slugOrigin}>{origin}/u/</span>
+        <input
+          className={styles.slugInput}
+          value={slug}
+          onChange={e => onSlugChange(e.target.value)}
+          onBlur={onBlur}
+          onKeyDown={onKeyDown}
+          spellCheck={false}
+        />
+      </div>
+      <button className={`${styles.copyBtn} ${copied ? styles.copyBtnDone : ''}`} onClick={onCopy} title="Copy link">
+        {copied ? <RiCheckLine size={15} /> : <RiFileCopyLine size={15} />}
+      </button>
+      {error && <p className={styles.slugErr}>{error}</p>}
+    </div>
   )
 }

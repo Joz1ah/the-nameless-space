@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../supabase/client'
-import { RiHeartFill, RiMailLine, RiGlobalLine, RiInstagramLine, RiTwitterXLine, RiQrCodeLine, RiCloseLine } from 'react-icons/ri'
+import { RiHeartFill, RiMailLine, RiGlobalLine, RiInstagramLine, RiTwitterXLine, RiQrCodeLine, RiCloseLine, RiMoonLine, RiSunLine } from 'react-icons/ri'
 import styles from './PublicBlog.module.css'
 
 function stripHTML(html) {
@@ -22,6 +22,20 @@ export default function PublicBlog() {
   const [filter, setFilter] = useState('all')
   const [notFound, setNotFound] = useState(false)
   const [showQR, setShowQR] = useState(false)
+  const [readerTheme, setReaderTheme] = useState(() => localStorage.getItem('reader-theme') || 'light')
+
+  // Override the owner's html data-theme while on public pages, restore on leave
+  useEffect(() => {
+    const prev = document.documentElement.getAttribute('data-theme')
+    document.documentElement.setAttribute('data-theme', readerTheme)
+    return () => { if (prev) document.documentElement.setAttribute('data-theme', prev) }
+  }, [readerTheme])
+
+  const toggleReaderTheme = () => setReaderTheme(t => {
+    const next = t === 'light' ? 'dark' : 'light'
+    localStorage.setItem('reader-theme', next)
+    return next
+  })
 
   useEffect(() => { load() }, [slug])
 
@@ -64,6 +78,9 @@ export default function PublicBlog() {
       {/* Sticky nav */}
       <nav className={styles.nav}>
         <a href="/" className={styles.navBrand}>the nameless space</a>
+        <button className={styles.themeToggle} onClick={toggleReaderTheme} title="Toggle theme">
+          {readerTheme === 'light' ? <RiMoonLine size={17} /> : <RiSunLine size={17} />}
+        </button>
       </nav>
 
       {/* Profile header */}
@@ -116,6 +133,7 @@ export default function PublicBlog() {
                     )}
                     <div className={styles.cardBody}>
                       <span className={styles.cardDate}>{formatDate(entry.created_at)}</span>
+                      {entry.mood && <span className={styles.cardMood}>{entry.mood}</span>}
                       {entry.title && <h3 className={styles.cardTitle}>{entry.title}</h3>}
                       <p className={styles.cardPreview}>{preview.length > 200 ? preview.slice(0, 200) + '…' : preview}</p>
                       <span className={styles.readMore}>read →</span>

@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { RiHeartFill } from 'react-icons/ri'
 import styles from './NotebookPage.module.css'
+import { MOODS } from './EntryEditor'
 
 function formatDate(dateStr) {
   return new Date(dateStr).toLocaleDateString('en-US', {
@@ -14,11 +15,21 @@ function formatTime(dateStr) {
 function stripHTML(html) {
   if (!html) return ''
   const withoutBlocks = html.replace(/<div[^>]*class="inline-photo-block"[^>]*>[\s\S]*?<\/div>/gi, ' ')
-  return withoutBlocks.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim()
+  return withoutBlocks
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/\s+/g, ' ')
+    .trim()
 }
 
 export default function NotebookPage({ entry, index, total }) {
   const navigate = useNavigate()
+  const moodObj = entry.mood ? MOODS.find(m => m.emoji === entry.mood) : null
   const photos = entry.entry_photos || []
   const highlightPhoto = photos.find(p => p.is_highlight) || null
   const previewPhotos = photos.filter(p => !p.is_highlight).slice(0, 2)
@@ -41,9 +52,27 @@ export default function NotebookPage({ entry, index, total }) {
           <div className={styles.meta}>
             <span className={styles.date}>{formatDate(entry.created_at)}</span>
             <span className={styles.time}>{formatTime(entry.created_at)}</span>
+            {moodObj && <span className={styles.moodBadge} title={moodObj.label}>{moodObj.emoji}</span>}
           </div>
 
+          {entry.category === 'food' && (entry.meta?.food_name || entry.meta?.food_type) && (
+            <div className={styles.entryMeta}>
+              {entry.meta.food_name && <span className={styles.entryMetaName}>{entry.meta.food_name}</span>}
+              {entry.meta.food_type && <span className={styles.entryMetaType}>{entry.meta.food_type}</span>}
+            </div>
+          )}
+          {entry.category === 'travel' && (entry.meta?.location || entry.meta?.adventure_type) && (
+            <div className={styles.entryMeta}>
+              {entry.meta.location && <span className={styles.entryMetaName}>📍 {entry.meta.location}</span>}
+              {entry.meta.adventure_type && <span className={styles.entryMetaType}>{entry.meta.adventure_type}</span>}
+            </div>
+          )}
+
           {entry.title && <h2 className={styles.title}>{entry.title}</h2>}
+
+          {entry.category === 'daily' && entry.meta?.daily_goal && (
+            <p className={styles.dailyGoal}>{entry.meta.daily_goal}</p>
+          )}
 
           <p className={styles.body}>{bodyPreview}</p>
 

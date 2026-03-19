@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../supabase/client'
-import { RiArrowLeftLine, RiCloseLine, RiHeartFill } from 'react-icons/ri'
+import { RiArrowLeftLine, RiCloseLine, RiHeartFill, RiMoonLine, RiSunLine } from 'react-icons/ri'
 import styles from './PublicEntryView.module.css'
 
 function formatDate(d) { return new Date(d).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) }
@@ -12,17 +12,28 @@ export default function PublicEntryView() {
   const { slug, id } = useParams()
   const navigate = useNavigate()
   const [entry, setEntry] = useState(null)
-  const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(true)
   const [lightbox, setLightbox] = useState(null)
+  const [readerTheme, setReaderTheme] = useState(() => localStorage.getItem('reader-theme') || 'light')
   const richBodyRef = useRef(null)
+
+  // Override the owner's html data-theme while on public pages, restore on leave
+  useEffect(() => {
+    const prev = document.documentElement.getAttribute('data-theme')
+    document.documentElement.setAttribute('data-theme', readerTheme)
+    return () => { if (prev) document.documentElement.setAttribute('data-theme', prev) }
+  }, [readerTheme])
+
+  const toggleReaderTheme = () => setReaderTheme(t => {
+    const next = t === 'light' ? 'dark' : 'light'
+    localStorage.setItem('reader-theme', next)
+    return next
+  })
 
   useEffect(() => { load() }, [id])
 
   const load = async () => {
     setLoading(true)
-    const { data: prof } = await supabase.from('profiles').select('*').eq('slug', slug).single()
-    setProfile(prof)
     const { data: ent } = await supabase
       .from('entries').select('*, entry_photos(*)')
       .eq('id', id).eq('is_draft', false).eq('is_locked', false).single()
@@ -59,9 +70,7 @@ export default function PublicEntryView() {
 
   const photos = entry.entry_photos || []
   const highlightPhoto = photos.find(p => p.is_highlight)
-  const nonHighlight = photos.filter(p => !p.is_highlight)
   const bodyIsHTML = isHTML(entry.body)
-  const lightboxIndex = lightbox ? photos.findIndex(p => p.url === lightbox.url) : -1
 
   return (
     <div className={styles.shell}>
@@ -77,7 +86,10 @@ export default function PublicEntryView() {
 
       <div className={styles.topBar}>
         <button className={styles.backBtn} onClick={() => navigate(`/u/${slug}`)}>
-          <RiArrowLeftLine size={18} /><span>{profile?.nickname || 'blog'}</span>
+          <RiArrowLeftLine size={18} /><span>Back</span>
+        </button>
+        <button className={styles.themeToggle} onClick={toggleReaderTheme} title="Toggle theme">
+          {readerTheme === 'light' ? <RiMoonLine size={17} /> : <RiSunLine size={17} />}
         </button>
       </div>
 

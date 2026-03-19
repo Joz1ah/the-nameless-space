@@ -28,11 +28,11 @@ export function useEntries(userId = null) {
 
   useEffect(() => { fetchEntries() }, [fetchEntries])
 
-  const createEntry = async ({ title, body, photos, is_draft = false }) => {
+  const createEntry = async ({ title, body, photos, is_draft = false, mood, category, meta }) => {
     const { data: { user } } = await supabase.auth.getUser()
     const { data: entry, error: entryError } = await supabase
       .from('entries')
-      .insert([{ title: title || null, body, is_draft, user_id: user.id }])
+      .insert([{ title: title || null, body, is_draft, user_id: user.id, mood: mood || null, category: category || null, meta: meta && Object.values(meta).some(v => v) ? meta : null }])
       .select().single()
     if (entryError) throw entryError
     if (photos?.length > 0) {
@@ -44,10 +44,13 @@ export function useEntries(userId = null) {
     return entry
   }
 
-  const updateEntry = async (id, { title, body, photos, is_draft, is_locked }) => {
+  const updateEntry = async (id, { title, body, photos, is_draft, is_locked, mood, category, meta }) => {
     const updateData = { title: title || null, body, updated_at: new Date().toISOString() }
     if (is_draft !== undefined) updateData.is_draft = is_draft
     if (is_locked !== undefined) updateData.is_locked = is_locked
+    if (mood !== undefined) updateData.mood = mood
+    if (category !== undefined) updateData.category = category
+    if (meta !== undefined) updateData.meta = meta && Object.values(meta).some(v => v) ? meta : null
     const { error } = await supabase.from('entries').update(updateData).eq('id', id)
     if (error) throw error
     await supabase.from('entry_photos').delete().eq('entry_id', id)

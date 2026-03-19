@@ -19,10 +19,10 @@ export default function EditEntry() {
     </div>
   )
 
-  const handleSave = async ({ title, body, photos, is_draft }) => {
+  const handleSave = async ({ title, body, photos, is_draft, mood, category, meta }) => {
     setSaving(true)
     try {
-      await updateEntry(id, { title, body, photos, is_draft: is_draft !== undefined ? is_draft : entry.is_draft })
+      await updateEntry(id, { title, body, photos, is_draft: is_draft !== undefined ? is_draft : entry.is_draft, mood, category, meta })
       navigate(`/entry/${id}`)
     } catch (err) {
       alert('Failed to update: ' + err.message)
